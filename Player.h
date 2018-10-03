@@ -13,7 +13,11 @@ public:
 	Player();
 	void Input(sf::Event _gameEvent);
 	void Update(sf::Time _FrameTime);
-	void Draw(sf::RenderTarget _target);
+	void Draw(sf::RenderTarget& _target);
+	void Spawn();
+
+	sf::Vector2f GetPosition();
+
 private:
 
 	// Assets
