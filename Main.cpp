@@ -90,7 +90,7 @@ int main()
 		{
 			platformColliders.push_back(it->GetCollider());
 		}
-		player.HandleCollison(platform.GetCollider());
+		player.HandleCollison(platforms.GetCollider());
 
 		//Update camera position
 		camera.setCenter(

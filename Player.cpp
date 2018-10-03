@@ -118,7 +118,7 @@ void Player::HandleCollison(std::vector<sf::FloatRect> _platforms)
 	{
 		sf::FloatRect platformCollider = *it;
 
-		if (playerCollider.intersects(_platforms))
+		if (playerCollider.intersects(platformCollider))
 		{
 			//Create feet collider
 			//Check if the bottom of players feet is touching top of platform
