@@ -3,10 +3,14 @@
 // --------------------------------------
 // Libraries
 #include <SFML/Graphics.hpp>
+#include <cstdlib>
+#include <ctime>
 
 // Project Includes
 #include "AssetManager.h"
 #include "Player.h"
+#include "Platform.h"
+
 
 
 int main()
@@ -26,12 +30,19 @@ int main()
 	// Create AssetManager
 	AssetManager assets;
 
+	// Seed random number genrator
+	srand(time(NULL));
+
 	// Create player
 	Player player;
 	player.Spawn();
 
 	//Create Camera
 	sf::View camera = gameWindow.getDefaultView();
+
+	//Create Platform
+	Platform platform;
+	platform.Spawn();
 
 	// end game setup
 	// --------------------------------------
@@ -68,11 +79,15 @@ int main()
 
 		player.Update(frameTime);
 
+		//Collision Detection
+		player.HandleCollison(platform.GetCollider());
+
 		//Update camera position
 		camera.setCenter(
 			player.GetPosition().x + camera.getSize().x * 0.4f,
 			camera.getCenter().y
 		);
+
 
 		// end update
 		// --------------------------------------
@@ -91,6 +106,7 @@ int main()
 		gameWindow.setView(camera);
 
 		player.Draw(gameWindow);
+		platform.Draw(gameWindow);
 
 		//Draw the UI to the window
 		gameWindow.setView(gameWindow.getDefaultView());

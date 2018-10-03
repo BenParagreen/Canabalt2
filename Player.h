@@ -18,6 +18,8 @@ public:
 
 	sf::Vector2f GetPosition();
 
+	void HandleCollison(sf::FloatRect _platform);
+
 private:
 
 	// Assets
@@ -29,4 +31,5 @@ private:
 
 	//State
 	sf::Vector2f m_velocity;
+	bool m_touchingGround;
 };

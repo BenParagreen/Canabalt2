@@ -14,6 +14,7 @@ Player::Player()
 	, m_landSound()
 	, m_animation()
 	, m_velocity(0.0f, 0.0f)
+	, m_touchingGround(false)
 {
 	//Sprite Setup
 	m_sprite.setTexture(AssetManager::GetTexture("graphics/playerJump.png"));
@@ -47,12 +48,18 @@ void Player::Input(sf::Event _gameEvent)
 		//Check if the button was space
 		if (_gameEvent.key.code == sf::Keyboard::Space)
 		{
-			//Player has tried to jump
-			//Play jump sound
-			m_jumpSound.play();
+			if (m_touchingGround == true)
+			{
+				//Player has tried to jump
+				//Play jump sound
+				m_jumpSound.play();
 
-			//Set the players upward velocity
-			m_velocity.y = Jump_Speed;
+				//Set the players upward velocity
+				m_velocity.y = Jump_Speed;
+
+				m_animation.Play("jump");
+			}
+			
 
 		}
 	}
@@ -64,8 +71,12 @@ void Player::Update(sf::Time _FrameTime)
 	m_animation.Update(_FrameTime);
 
 	//Apply gravity to the velocity
-	float velocityChange = Gravity * _FrameTime.asSeconds();
-	m_velocity.y += velocityChange;
+	if (m_touchingGround == false)
+	{
+		float velocityChange = Gravity * _FrameTime.asSeconds();
+	    m_velocity.y += velocityChange;
+	}
+	
 
 	//Move sprite based on velocity
 	sf::Vector2f currentPosition = m_sprite.getPosition();
@@ -92,3 +103,44 @@ sf::Vector2f Player::GetPosition()
 {
 	return m_sprite.getPosition();
 }
+
+void Player::HandleCollison(sf::FloatRect _platform)
+{
+	bool wasTouchingGround = m_touchingGround;
+
+	m_touchingGround = false;
+
+	// Get the collider for the player bounds
+	sf::FloatRect playerCollider = m_sprite.getGlobalBounds();
+
+	if (playerCollider.intersects(_platform))
+	{
+		//Create feet collider
+		//Check if the bottom of players feet is touching top of platform
+		sf::FloatRect feetCollider = playerCollider;
+		feetCollider.top += playerCollider.height - 10;
+		// Set our feet collider height to be 10 pixels
+
+		//Create platform top collider
+		sf::FloatRect platformTop = _platform;
+		platformTop.height = 10;
+
+		if (feetCollider.intersects(platformTop))
+		{
+			m_touchingGround = true;
+			if (m_velocity.y > 0 && wasTouchingGround == false)
+			{
+                m_animation.Play("run");
+			    m_landSound.play();
+		        m_velocity.y = 0;
+			    m_touchingGround = true;
+
+			}
+		}
+	}
+	if (m_touchingGround== false && wasTouchingGround == true)
+    {
+		m_animation.Play("jump");
+    }
+}
+
