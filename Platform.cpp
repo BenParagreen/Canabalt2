@@ -13,6 +13,9 @@
 #define SIZE_Y_MAX 5
 #define POS_Y_MIN 800
 #define POS_Y_MAX 1000
+#define GAP_SIZE 200
+
+float Platform::s_furthestPoint = 0;
 
 Platform::Platform()
 	: m_sprite()
@@ -30,8 +33,11 @@ void Platform::Spawn()
 
 	sf::Vector2f position;
 	position.y = rand() % (POS_Y_MAX - POS_Y_MIN) + POS_Y_MIN;
-	position.x = 0;
+	position.x = s_furthestPoint + GAP_SIZE;
 	m_sprite.setPosition(position);
+
+	//Update the furthest position
+	s_furthestPoint = position.x + m_sprite.getGlobalBounds().width;
 }
 
 void Platform::Draw(sf::RenderTarget& _target)

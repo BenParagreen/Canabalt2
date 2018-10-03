@@ -11,8 +11,11 @@ public:
 	void Draw(sf::RenderTarget& _target);
 	sf::FloatRect GetCollider();
 
+
 private:
 	//Assets
 	sf::Sprite m_sprite;
 
+	//Platform Shared Data
+	static float s_furthestPoint;
 };

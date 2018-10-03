@@ -104,7 +104,7 @@ sf::Vector2f Player::GetPosition()
 	return m_sprite.getPosition();
 }
 
-void Player::HandleCollison(sf::FloatRect _platform)
+void Player::HandleCollison(std::vector<sf::FloatRect> _platforms)
 {
 	bool wasTouchingGround = m_touchingGround;
 
@@ -113,34 +113,43 @@ void Player::HandleCollison(sf::FloatRect _platform)
 	// Get the collider for the player bounds
 	sf::FloatRect playerCollider = m_sprite.getGlobalBounds();
 
-	if (playerCollider.intersects(_platform))
+	//Loop through each platform collider
+	for (auto it = _platforms.begin(); it != _platforms.end(); ++it)
 	{
-		//Create feet collider
-		//Check if the bottom of players feet is touching top of platform
-		sf::FloatRect feetCollider = playerCollider;
-		feetCollider.top += playerCollider.height - 10;
-		// Set our feet collider height to be 10 pixels
+		sf::FloatRect platformCollider = *it;
 
-		//Create platform top collider
-		sf::FloatRect platformTop = _platform;
-		platformTop.height = 10;
-
-		if (feetCollider.intersects(platformTop))
+		if (playerCollider.intersects(_platforms))
 		{
-			m_touchingGround = true;
-			if (m_velocity.y > 0 && wasTouchingGround == false)
-			{
-                m_animation.Play("run");
-			    m_landSound.play();
-		        m_velocity.y = 0;
-			    m_touchingGround = true;
+			//Create feet collider
+			//Check if the bottom of players feet is touching top of platform
+			sf::FloatRect feetCollider = playerCollider;
+			feetCollider.top += playerCollider.height - 10;
+			// Set our feet collider height to be 10 pixels
 
+			//Create platform top collider
+			sf::FloatRect platformTop = platformCollider;
+			platformTop.height = 10;
+
+			if (feetCollider.intersects(platformTop))
+			{
+				m_touchingGround = true;
+				if (m_velocity.y > 0 && wasTouchingGround == false)
+				{
+					m_animation.Play("run");
+					m_landSound.play();
+					m_velocity.y = 0;
+					m_touchingGround = true;
+
+				}
 			}
 		}
+		if (m_touchingGround == false && wasTouchingGround == true)
+		{
+			m_animation.Play("jump");
+		}
 	}
-	if (m_touchingGround== false && wasTouchingGround == true)
-    {
-		m_animation.Play("jump");
-    }
 }
+
+	
+	
 
